@@ -1,8 +1,8 @@
 # arcade
 
-## to run
+## run
 
-python -m SimpleHTTPServer
+```python -m SimpleHTTPServer```
 
 
-![alt tag](https://raw.github.com/stephenprill/arcade/falco-lombardi-shooter/assets/thankful.png)
+![alt tag](https://github.com/stephenprill/arcade/blob/master/falco-lombardi-shooter/assets/thankful.png)
