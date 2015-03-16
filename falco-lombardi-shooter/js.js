@@ -4,8 +4,8 @@ var player;
 var starfield;
 
 function preload() {
-    game.load.image('starfield', '/assets/starfield.png');
-    game.load.image('ship', '/assets/player.png');
+    game.load.image('starfield', 'assets/starfield.png');
+    game.load.image('ship', 'assets/player.png');
 }
 
 function create() {
@@ -18,7 +18,8 @@ function create() {
 }
 
 function update() {
-
+  starfield.tilePosition.x += 6;
+  starfield.tilePosition.y += 6;
 }
 
 function render() {
