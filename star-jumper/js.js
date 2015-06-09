@@ -17,8 +17,6 @@ var game = new Phaser.Game(1200, 900, Phaser.AUTO, '', { preload: preload, creat
 //The first parameter aka the asset key is a string i.e. 'sky' which is link to the loaded asset and is what you'll use in your code when creating sprites.
 //You're free to use any valid JavaScript string as the key.
 
-
-
 function preload() {
   game.load.image('sky', 'assets/sky_new.png');
   game.load.image('ground', 'assets/platform.png');
@@ -30,7 +28,13 @@ function preload() {
 //The order in which items are rendered in the display matches the order in which you create them.
 //To place a background behind the star sprite you need to ensure it is added as a sprite first, before the star.
 
+var player;
 var platforms;
+var cursors;
+
+var stars;
+var score = 0;
+var scoreText;
 
 function create() {
   // Enable the Arcade Physics system
@@ -94,7 +98,46 @@ function create() {
   player.body.gravity.y = 300;
   player.body.collideWorldBounds = true;
 
-}
+  //Our two animations, walking left and right based off sprite sheet for 'dude'
+  player.animations.add('left', [0,1,2,3], 10, true);
+  player.animations.add('right',[5,6,7,8], 10, true);
+
+  //Populates the cursors object with four properties: up, down, left, right
+  //All instances of Phaser.Key objects
+
+  // Collect stars
+   stars = game.add.group();
+
+   //  We will enable physics for any star that is created in this group
+    stars.enableBody = true;
+
+
+        //Create 12 of them evenly spaced apart for loop
+        for (var i = 0; i < 12; i++)
+        {
+            //They have an x coordinate of i * 70, will be evenly spaced out in the scene 70 pixels apart
+
+            //  Create a star inside of the 'stars' group
+            var star = stars.create(i * 70, 0, 'star');
+
+            //  Apply gravity to the stars
+            star.body.gravity.y = 300;
+
+            //Bounce is a value between 0 (no bounce) and 1 (full bounce)
+            //Below will bounce somewhere between 0.7 and 0.9 based on: 0.7 + Math.random() * 0.2
+
+            //  This just gives each star a slightly random bounce value
+            star.body.bounce.y = 0.7 + Math.random() * 0.2;
+        }
+
+        //  Scoreboard
+        scoreText = game.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
+
+        //  Our controls.
+        cursors = game.input.keyboard.createCursorKeys();
+
+    }
+
 
 
 //We've already told our ground and ledges to be immovable. Had we not done that when the player collided with them it would stop for a moment and then everything would have collapsed.
@@ -110,6 +153,55 @@ function create() {
 
 function update() {
 
-  // Collide the player and the stars with the platforms
+  //  Collide the player and the stars with the platforms
   game.physics.arcade.collide(player, platforms);
+  game.physics.arcade.collide(stars, platforms);
+
+  //  Checks to see if the player overlaps with any of the stars, if he does call the collectStar function
+  game.physics.arcade.overlap(player, stars, collectStar, null, this);
+
+  //  Reset the players velocity (movement)
+  player.body.velocity.x = 0;
+
+  //Check to see if the left cursor key is held down
+  if (cursors.left.isDown)
+  {
+      //If it is apply negative horizontal velocity and start 'left' running animation aka move to the left
+      player.body.velocity.x = -150;
+
+      player.animations.play('left');
+  }
+  //Check to see if the right cursor key is held down
+  else if (cursors.right.isDown)
+  {
+      //Opposite of left
+      player.body.velocity.x = 150;
+
+      player.animations.play('right');
+  }
+  else
+  {
+      //  Stand still aka idle
+      player.animations.stop();
+
+      player.frame = 4;
+  }
+
+  //  Allow the player to jump if they are touching the ground
+  if (cursors.up.isDown && player.body.touching.down)
+  {
+      player.body.velocity.y = -350;
+  }
+
+}
+
+function collectStar (player, star) {
+
+  // Removes the star from the screen when star killed
+  star.kill();
+
+  //  Add and update the score
+  score += 10;
+  scoreText.text = 'Score: ' + score;
+
 }
