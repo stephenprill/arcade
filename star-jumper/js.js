@@ -8,7 +8,7 @@
 //The fourth parameter is an empty string, this is the id of the DOM element in which you would like to insert the canvas element that Phaser creates.
 //As we've left it blank it will simply be appended to the body. The final parameter is an object containing four references to Phasers essential functions.
 
-var game = new Phaser.Game(1200, 900, Phaser.AUTO, '', { preload: preload, create: create, update: update });
+var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update });
 
 //You load assets by putting calls to game.load inside of a function called preload.
 //Phaser will automatically look for this function when it starts and load anything defined within it.
@@ -20,7 +20,7 @@ var game = new Phaser.Game(1200, 900, Phaser.AUTO, '', { preload: preload, creat
 function preload() {
   game.load.image('sky', 'assets/sky_new.png');
   game.load.image('ground', 'assets/platform.png');
-  game.load.image('star', 'assets/star.png');
+  game.load.image('star', 'assets/coin.png');
   game.load.spritesheet('dude', 'assets/dude.png', 32, 48);
 }
 
