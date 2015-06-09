@@ -39,6 +39,14 @@ function create() {
   // Simple background for the game
   game.add.sprite(0,0,'sky');
 
+  //Groups allow you to group together similar objects and control them all as one single unit.
+  //You can also check for collision between Groups, and for this game we'll be using two different Groups, one of which is created in the code above for the platforms: platforms = game.add.group();
+  //As with sprites game.add creates our Group object. We assign it to a new local variable called platforms.
+  //Now created we can add objects to it. First up is the ground. This is positioned at the bottom of the game and uses the 'ground' image loaded earlier.
+  //The ground is scaled to fill the width of the game. Finally we set its immovable property to true.
+  //Had we not done this the ground would move when the player collides with it (more on this in the Physics section).
+  //With the ground in place we create two smaller ledges to jump on to using the exact same technique as for the ground.
+
   //The platforms group contains the ground and the 2 ledges we can jump on
   platforms = game.add.group();
 
@@ -63,7 +71,45 @@ function create() {
 
   ledge.body.immovable = true;
 
+  //This creates a new sprite called 'player', positioned at 32 pixels by 150 pixels from the bottom of the game.
+  //We're telling it to use the 'dude' asset previously loaded. The preload function loaded 'dude' as a sprite sheet, not an image due to animation frames.
+
+  //This player and its settings here
+  player = game.add.sprite(32, game.world.height - 150, 'dude');
+
+  //Enable physics on the player
+  game.physics.arcade.enable(player);
+
+  //We define two animations called 'left' and 'right'. The 'left' animation uses frames 0, 1, 2 and 3 and runs at 10 frames per second.
+  //The 'true' parameter tells the animation to loop. This is our standard run-cycle and we repeat it for running in the opposite direction.
+  //With the animations set we create a few physics properties.
+
+  //Once done the sprites gain a new body property, which is an instance of ArcadePhysics.Body.
+  //This represents the sprite as a physical body in Arcade Physics engine. The body object has itself a lot of properties that we can play with.
+  //To simulate the effects of gravity on a sprite, it's as simple as writing this: player.body.gravity.y = 300;
+  //This is an arbitrary value, but logically, the higher the value, the heavier your object feels and the quicker it falls.
+
+  //Player physics properties.
+  player.body.bounce.y = 0.2;
+  player.body.gravity.y = 300;
+  player.body.collideWorldBounds = true;
+
 }
 
+
+//We've already told our ground and ledges to be immovable. Had we not done that when the player collided with them it would stop for a moment and then everything would have collapsed.
+//This is because unless told otherwise, the ground sprite is a moving physical object (also known as a dynamic body)
+//When the player hits it, the resulting force of the collision is applied to the ground so the two bodies exchange their velocities and ground starts falling as well.
+//So to allow the player to collide and take advantage of the physics properties we need to introduce a collision check in the update function: game.physics.arcade.collide(player, platforms);
+
+//The update function is called by the core game loop every frame.
+//The Physics.collide function is the one that performs the magic.
+//It takes two objects and tests for collision and performs separation against them.
+//In this case we're giving it the player sprite and the platforms Group.
+//It's clever enough to run collision against all Group members, so this one call will collide against the ground and both ledges. The result is a firm platform.
+
 function update() {
+
+  // Collide the player and the stars with the platforms
+  game.physics.arcade.collide(player, platforms);
 }
